@@ -41,7 +41,7 @@ public:
 		m_row = 0;
 		m_col = 0;
 
-		delete m_Mx;
+		delete[] m_Mx;
 
 		m_Mx = nullptr;
 	}
@@ -103,26 +103,24 @@ public:
 	{
 		m_row = M.m_row;
 		m_col = M.m_col;
-		m_Mx = new int* [m_row];
+		m_Mx = M.m_Mx;
 
-		for (int i = 0; i < m_row; i++)
-		{
-			m_Mx[i] = new int[m_col];
-		}
-
-		for (int i = 0; i < m_row; i++)
-			for (int j = 0; j < m_col; j++)
-			{
-				m_Mx[i][j] = M.m_Mx[i][j];
-			}
-
-		M.~Matrix();	
+		M.m_row = 0;
+		M.m_col = 0;
+		M.m_Mx = nullptr;
 	}
 
 	Matrix& operator=(const Matrix& M)
 	{
 		if (this != &M)
 		{
+			
+			for (int i = 0; i < m_col; i++)
+			{
+				delete	m_Mx[i];	//чистка
+			}
+			delete[] m_Mx;
+
 			m_row = M.m_row;
 			m_col = M.m_col;
 			m_Mx = new int* [m_row];
@@ -141,6 +139,18 @@ public:
 		return *this;
 	}
 
+	Matrix& operator=(Matrix&& M)
+	{
+		m_row = M.m_row;
+		m_col = M.m_col;
+		m_Mx = M.m_Mx;
+
+		M.m_row = 0;
+		M.m_col = 0;
+		M.m_Mx = nullptr;
+
+		return *this;
+	}
 };
 
 int main()
